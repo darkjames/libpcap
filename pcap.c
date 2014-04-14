@@ -108,6 +108,10 @@
 #include "pcap-dbus.h"
 #endif
 
+#ifdef PCAP_SUPPORT_RPCAP
+#include "pcap-rpcap.h"
+#endif
+
 int
 pcap_not_initialized(pcap_t *pcap _U_)
 {
@@ -341,6 +345,9 @@ struct capture_source_type {
 #ifdef PCAP_SUPPORT_DBUS
 	{ dbus_findalldevs, dbus_create },
 #endif
+#ifdef PCAP_SUPPORT_RPCAP
+	{ NULL, rpcap_create },
+#endif
 	{ NULL, NULL }
 };
 
@@ -381,8 +388,10 @@ pcap_findalldevs(pcap_if_t **alldevsp, char *errbuf)
 	 * Ask each of the non-local-network-interface capture
 	 * source types what interfaces they have.
 	 */
-	for (i = 0; capture_source_types[i].findalldevs_op != NULL; i++) {
-		if (capture_source_types[i].findalldevs_op(alldevsp, errbuf) == -1) {
+	for (i = 0; capture_source_types[i].findalldevs_op != NULL && capture_source_types[i].create_op != NULL; i++) {
+		const struct capture_source_type *source = &(capture_source_types[i]);
+
+		if (source->findalldevs_op && capture_source_types[i].findalldevs_op(alldevsp, errbuf) == -1) {
 			/*
 			 * We had an error; free the list we've been
 			 * constructing.

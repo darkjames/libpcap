@@ -1409,6 +1409,21 @@ esac
 AC_SUBST(PCAP_SUPPORT_USB)
 AC_SUBST(USB_SRC)
 
+AC_MSG_CHECKING(for rpcap support)
+dnl V_PCAP test?
+case "$host_os" in
+linux*)
+
+	AC_DEFINE(PCAP_SUPPORT_RPCAP, 1, [target host supports remote capture])
+	RPCAP_SRC=pcap-rpcap.c
+	AC_MSG_RESULT(yes)
+	;;
+*)
+	AC_MSG_RESULT(no)
+	;;
+esac
+AC_SUBST(RPCAP_SRC)
+
 dnl check for netfilter sniffing support
 AC_MSG_CHECKING(whether the platform could support netfilter sniffing)
 case "$host_os" in

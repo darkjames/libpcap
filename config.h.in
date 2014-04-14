@@ -271,6 +271,9 @@
 /* target host supports netfilter sniffing */
 #undef PCAP_SUPPORT_NETFILTER
 
+/* target host supports remote capture */
+#undef PCAP_SUPPORT_RPCAP
+
 /* target host supports USB sniffing */
 #undef PCAP_SUPPORT_USB
 
